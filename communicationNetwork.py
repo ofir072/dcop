@@ -1,5 +1,9 @@
 
-def message_arrived(network, receiving_agent, sending_agent, message):
-    for agent in network:
-        if agent.agent_id == receiving_agent:
-            agent.update_neighbor_choice(sending_agent, message)
+class Communication_Network:
+    def __init__(self):
+        self.network = list()
+
+    def send_message(self, sending_agent, receiving_agent, message, message_kind):
+        for agent in self.network:
+            if agent.agent_id == receiving_agent:
+                agent.receive_message(sending_agent, message, message_kind)
