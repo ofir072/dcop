@@ -23,7 +23,7 @@ def create_agents(communication_network, num_of_agents):   # Create the agents o
     for i in range(1, num_of_agents + 1):
         new_agent = Agent(i, domain+1, communication_network)
         all_agents.append(new_agent)
-        communication_network.network.append(new_agent)
+        communication_network.network.append(new_agent)     # Add all the agents to the communication network
     return all_agents
 
 
@@ -31,70 +31,51 @@ def generate_neighbors(network, probability, upper_cost):    # Generate neighbor
     for i in range(len(network)):
         for j in range(i + 1, len(network)):    # Loop other the remaining pairs for the upcoming agent
             if random.random() < probability:   # Probability of neighbors filter
+                # Matrix uniq creation for pair neighbor
                 matrix = np.array([[random.randint(0, upper_cost) for _ in range(domain)] for _ in range(domain)])
                 agent1 = network[i]
                 agent2 = network[j]
                 agent1_id = agent1.agent_id
                 agent2_id = agent2.agent_id
+                # Set the matrix when the rows point on the current agent choice and the row for the neighbor choice
                 agent1.set_neighbors(agent2.agent_id, matrix)
-                agent2.set_neighbors(agent1.agent_id, matrix.transpose())
+                agent2.set_neighbors(agent1.agent_id, matrix.transpose())   # Set the transpose matrix for the rule up
+                # Each agent sent his base random choice for the first iteration threw the communication_network
                 agent1.communication_network.send_message(agent2_id, agent1_id, agent2.domain_choice, "base")
                 agent2.communication_network.send_message(agent1_id, agent2_id, agent1.domain_choice, "base")
 
 
-def initialization_iteration(network):
-    for network_agent in network:
-        network_agent.update_next_iteration_choices()
-
-
-def agents_data(network):
-    for agent in network:
-        print(f"Agent ID: {agent.agent_id}")
-        print(f"Agent Domain: {agent.domain}")
-        print(f"Agent Choice: {agent.domain_choice}")
-        for neighbor_id, neighbor_info in agent.neighbors.items():
-            print(f"Neighbor ID: {neighbor_id}")
-            print(f"Neighbor base choice: {neighbor_info['base choice']}")
-            print(f"Neighbor next choice: {neighbor_info['next choice']}")
-            neighbor_matrix = neighbor_info['matrix']
-            for row in neighbor_matrix:
-                print(row)
-            print()
-        print("------")
-
-
-def iteration_total_cost(network):
+def iteration_total_cost(network):  # Calculate the total cost after for one iteration
     total_network_cost = 0
     visited_agents = set()  # Keep track of visited agent pairs to avoid double counting
     for agent in network:
         agent_cost = 0
         for neighbor_id, neighbor_info in agent.neighbors.items():
-            if (neighbor_id, agent.agent_id) not in visited_agents:
+            if (neighbor_id, agent.agent_id) not in visited_agents:     # Only not visited neighbors
                 neighbor_choice = neighbor_info['base choice']
                 matrix = neighbor_info['matrix']
-                neighbors_cost = matrix[agent.domain_choice - 1][neighbor_choice - 1]
+                neighbors_cost = matrix[agent.domain_choice - 1][neighbor_choice - 1]   # The choice combination cost
                 agent_cost += neighbors_cost
                 visited_agents.add((agent.agent_id, neighbor_id))
         total_network_cost += agent_cost
     return total_network_cost
 
 
-def dsa_p_correlation():
+def dsa_p_correlation():    # Create data frame with the total cost for each p on {rounds}*{runs} changes
     columns = ['p', 'cost']
     df_new = pd.DataFrame(columns=columns)
-    for rou in range(rounds):
-        # print(f"Round: {rou}")
-        for p in np.arange(0, 1.05, 0.05):
-            # print(f"p: {p}")
+    for rou in range(rounds):   # Loop over {rounds} different sets of problems
+        for p in np.arange(0, 1.05, 0.05):  # Loop over the {p} values of the chance to make choice
+            # Set the current agent network - controlled by the seed to create repeat of the same problem between rounds
             random.seed(1+rou)
             communication_network1 = communicationNetwork.Communication_Network()
             network1 = create_agents(communication_network1, n)
             generate_neighbors(network1, k1, cost)
-            for r in range(runs):
-                # print(f"Run: {r}")
+            for r in range(runs):   # Loop over {runs} of set of choices on the same problem
                 for run_agent in network1:
-                    run_agent.dsa_make_choice(p)
-                initialization_iteration(network1)
+                    run_agent.dsa_make_choice(p)    # Each agent make an DSA-C choice
+                communication_network1.initialization_iteration()  # Set the agents state of messages for next run
+            # Update the data frame for each p value
             if p in df_new['p'].values:
                 df_new.loc[df_new['p'] == p, 'cost'] += iteration_total_cost(network1)
             else:
@@ -113,7 +94,7 @@ def algorithms_comparison(neighbor_chance, pro, kind):
     for i in range(iterations):
         for network_agent in network2:
             network_agent.dsa_make_choice(pro)
-        initialization_iteration(network2)
+        communication_network2.initialization_iteration()
         new_df_temp = pd.DataFrame({'Iteration': [i], f'{kind}': [iteration_total_cost(network2)]})
         new_df = pd.concat([new_df, new_df_temp], ignore_index=True)
     return new_df
