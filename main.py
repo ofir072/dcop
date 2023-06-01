@@ -89,7 +89,7 @@ def algorithms_comparison(neighbor_chance, pro, kind):  # Run DSA-C/MGM with con
     new_df_columns = ['Iteration', f'{kind}']
     new_df = pd.DataFrame(columns=new_df_columns)
     # Set the current agent network - controlled by the seed to create repeat of the same problem between rounds
-    random.seed(42)
+    random.seed(2)
     communication_network2 = communicationNetwork.Communication_Network()
     network2 = create_agents(communication_network2, n)
     generate_neighbors(network2, neighbor_chance, cost)
@@ -143,7 +143,7 @@ df3['MGM'] = algorithms_comparison(k2, p1, "MGM")['MGM']
 plt.figure(300)
 plt.plot(df3['Iteration'], df3['DSA-C : P=O.7'], '-', label='DSA-C : P=O.7')
 plt.plot(df3['Iteration'], df3['DSA-C : P=O.2'], '-', label='DSA-C : P=O.2')
-plt.plot(df2['Iteration'], df2['MGM'], '-', label='MGM')
+plt.plot(df3['Iteration'], df3['MGM'], '-', label='MGM')
 plt.xlabel('Iteration')
 plt.ylabel('Cost')
 plt.title('Graph 3 - Iteration vs Cost')
