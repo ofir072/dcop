@@ -112,19 +112,20 @@ def algorithms_comparison(neighbor_chance, pro, kind):  # Run DSA-C/MGM with con
     return new_df
 
 
-# Graph number 1 - DSA-C for vary of p values
-df1 = dsa_p_correlation()
-df1['cost'] = df1['cost'] / (runs*rounds)
-plt.figure(100)
-plt.plot(df1['p'], df1['cost'], marker='o')
-plt.xlabel('P')
-plt.ylabel('Cost')
-plt.title('Graph 1 - Costs vs P')
-plt.grid(True)
+# # Graph number 1 - DSA-C for vary of p values
+# df1 = dsa_p_correlation()
+# df1['cost'] = df1['cost'] / (runs*rounds)
+# print(df1)
+# plt.figure(100)
+# plt.plot(df1['p'], df1['cost'], marker='o')
+# plt.xlabel('P')
+# plt.ylabel('Cost')
+# plt.title('Graph 1 - Costs vs P')
+# plt.grid(True)
 
 # Graph number 2 - algorithms comparison for k=0.2 in DSA-C.07, DSA-C.02 and MGM
-df2 = algorithms_comparison(k1, p1, "DSA-C : P=O.7")
-df2['DSA-C : P=O.2'] = algorithms_comparison(k1, p2, "DSA-C : P=O.2")['DSA-C : P=O.2']
+df2 = algorithms_comparison(k1, p2, "DSA-C : P=O.7")
+df2['DSA-C : P=O.2'] = algorithms_comparison(k1, p1, "DSA-C : P=O.2")['DSA-C : P=O.2']
 df2['MGM'] = algorithms_comparison(k1, p1, "MGM")['MGM']
 plt.figure(200)
 plt.plot(df2['Iteration'], df2['DSA-C : P=O.7'], '-', label='DSA-C : P=O.7')
@@ -137,8 +138,8 @@ plt.legend()
 plt.grid(True)
 
 # Graph number 3 - algorithms comparison for k=0.7 in DSA-C.07, DSA-C.02 and MGM
-df3 = algorithms_comparison(k2, p1, "DSA-C : P=O.7")
-df3['DSA-C : P=O.2'] = algorithms_comparison(k2, p2, "DSA-C : P=O.2")['DSA-C : P=O.2']
+df3 = algorithms_comparison(k2, p2, "DSA-C : P=O.7")
+df3['DSA-C : P=O.2'] = algorithms_comparison(k2, p1, "DSA-C : P=O.2")['DSA-C : P=O.2']
 df3['MGM'] = algorithms_comparison(k2, p1, "MGM")['MGM']
 plt.figure(300)
 plt.plot(df3['Iteration'], df3['DSA-C : P=O.7'], '-', label='DSA-C : P=O.7')
