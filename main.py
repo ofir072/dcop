@@ -112,16 +112,16 @@ def algorithms_comparison(neighbor_chance, pro, kind):  # Run DSA-C/MGM with con
     return new_df
 
 
-# # Graph number 1 - DSA-C for vary of p values
-# df1 = dsa_p_correlation()
-# df1['cost'] = df1['cost'] / (runs*rounds)
-# print(df1)
-# plt.figure(100)
-# plt.plot(df1['p'], df1['cost'], marker='o')
-# plt.xlabel('P')
-# plt.ylabel('Cost')
-# plt.title('Graph 1 - Costs vs P')
-# plt.grid(True)
+# Graph number 1 - DSA-C for vary of p values
+df1 = dsa_p_correlation()
+df1['cost'] = df1['cost'] / (runs*rounds)
+print(df1)
+plt.figure(100)
+plt.plot(df1['p'], df1['cost'], marker='o')
+plt.xlabel('P')
+plt.ylabel('Cost')
+plt.title('Graph 1 - Costs vs P')
+plt.grid(True)
 
 # Graph number 2 - algorithms comparison for k=0.2 in DSA-C.07, DSA-C.02 and MGM
 df2 = algorithms_comparison(k1, p2, "DSA-C : P=O.7")
